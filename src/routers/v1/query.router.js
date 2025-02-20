@@ -1,8 +1,8 @@
-const express = require('express');
-const QueryController =  require('./../../controllers/query.controller');
+const express = require("express")
+const {QueryController} = require("./../../controllers/query.controller")
 
-const QueryRouter = express.Router();
+const QueryRouter = express.Router()
 
-QueryRouter.post("/",QueryController);
+QueryRouter.post("/", QueryController)
 
-module.exports = QueryRouter;
+module.exports = QueryRouter

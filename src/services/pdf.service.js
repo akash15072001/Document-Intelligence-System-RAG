@@ -1,96 +1,152 @@
-const PDFSModel = require('./../models/pdfs.model');
+const PDFSModel = require("./../models/pdfs.model")
 
-// CreateNewPDFEntryService - This service will create a new entry for the pdf in the pdfs collection of mongoDB.
-const CreateNewPDFEntryService = async (name, author, organizationId, size, pageCount) => {
-    try {
-        const PDF = await PDFSModel.create({ // FIXED: Added `await`
-            name: name,
-            author: author,
-            organization: organizationId,
-            size: size,
-            page_count: pageCount
-        });
+const GetAllIndexedPdfService = async ()=>{
+    try{
 
-        if (PDF) { // If the entry is created successfully then return the pdf details.
+        const PDFs = await PDFSModel.find().exec()
+
+        if(PDFs){
             return {
-                success: true,
-                data: PDF
-            };
-        } else {
-            throw new Error(`Unable to create entry for pdf in pdfs collection of mongoDB`);
-        }
-    } catch (err) {
-        console.log(`Error in CreateNewPDFEntryService with error - ${err}`);
-        return {
-            success: false,
-            message: err.message
-        };
-    }
-};
-
-// ================================================================================================================
-
-// UpdateTheIndexedInfoOfPDFService - This service will update the pdf is_indexed and indexed_at value in mongoDB.
-const UpdateTheIndexedInfoOfPDFService = async (pdfId) => {
-    try {
-        // Update the pdf is_indexed and indexed_at value in mongoDB.
-        const result = await PDFSModel.findByIdAndUpdate(
-            pdfId,
-            {
-                is_indexed: true,
-                indexed_at: Date.now()
+                success : true,
+                data : PDFs
             }
-        ).exec(); // FIXED: Changed `.exex()` to `.exec()`
+        }else{
+            throw new Error('Unable to fetch pdfs from pdfs collection of mongoDB')
+        }
 
-        console.log(result);
+    }catch(err){
+        console.log(`Error in GetAllIndexedPdfService with err : ${err}`)
+        return {
+            success : false,
+            message : err.message
+        }
+    }
+}
 
-        if (!result) {
-            throw new Error(`Unable to update the indexing info of pdf with pdfId : ${pdfId}`);
+const CreateNewPDFEntryService = async (name, author, organizationId, size, pageCount, pdfUrl)=>{
+    try{
+
+        const PDF = await PDFSModel.create({
+            name : name,
+            author : author,
+            organization : organizationId,
+            size : size,
+            page_count : pageCount,
+            url : pdfUrl
+        })
+
+        if(PDF){
+            return {
+                success : true,
+                data : PDF
+            }
+        }else{
+            throw new Error('Unable to create new PDF entry in pdfs collection of mongoDB')
+        }
+
+    }catch(err){
+        console.log(`Error in CreateNewPDFEntryService with err : ${err}`)
+        return {
+            success : false,
+            message : err.message
+        }
+    }
+}
+
+const UpdateTheIndexedInfoOfPDFService = async (pdfId)=>{
+    try{
+
+        const result = await PDFSModel.findByIdAndUpdate(pdfId, {is_indexed : true,  indexed_at : Date()}).exec()
+
+        if(!result){
+            throw new Error(`Unable to update the indexing info of pdf with pdfId : ${pdfId}`)
         }
 
         return {
-            success: true
-        };
-    } catch (err) {
-        console.log(`Error in UpdateTheIndexedInfoOfPDFService with error - ${err}`);
+            success : true
+        }
+
+    }catch(err){
+        console.log(`Error in UpdateTheIndexedInfoOfPDFService with err : ${err}`)
         return {
-            success: false,
-            message: err.message
-        };
+            success : false,
+            message : err.message
+        }
     }
-};
+}
 
-// ================================================================================================================
+const CheckPdfDuplicacyService = async (name, size, organizationId)=>{
+    try{
 
-// CheckPdfDuplicacyService - This service will check the duplicacy of the pdf with the given name, size and organizationId.
-const CheckPdfDuplicacyService = async (name, size, organizationId) => {
-    try {
-        const result = await PDFSModel.findOne({ // Find the pdf with the given name, size and organizationId.
-            name: name,
-            size: size,
-            organization: organizationId
-        }).exec(); // FIXED: Changed `.exex()` to `.exec()`
-
-        if (!result) {
-            console.log(`Unable to check duplicacy of pdf with name: ${name} and size: ${size} and organizationId: ${organizationId}`);
+        const result = await PDFSModel.findOne({name : name, size : size, organization : organizationId}).exec() 
+        
+        if(!result){
+            throw new Error(`Unable to check duplicacy of the pdf`)
         }
 
         return {
-            success: true
-        };
-    } catch (err) {
-        console.log(`Error in CheckPdfDuplicacyService with error - ${err}`);
-        return {
-            success: false,
-            message: err.message
-        };
-    }
-};
+            success : true
+        }
 
-// ================================================================================================================
+    }catch(err){
+        console.log(`Error in CheckPdfDuplicacyService with err : ${err}`)
+        return {
+            success : false,
+            message : err.message
+        }
+    }
+} 
+
+const GetPDFDetailsUsingItsIdService = async (sourceId)=>{
+    try{
+
+        const pdf = await PDFSModel.findById(sourceId).exec()
+
+        if(!pdf){
+            throw new Error(`unable to get pdf details for the pdf with sourceId : ${sourceId}`)
+        }
+
+        return {
+            success : true,
+            data : pdf
+        }
+
+    }catch(err){
+        console.log(`Error in GetPDFDetailsUsingItsIdService with err : ${err}`)
+        return {
+            success : false,
+            message : err.message
+        }
+    }
+}
+
+const DeleteIndexedPdfUsingItsIdService = async (sourceId)=>{
+    try{
+
+        const deleteResult = await PDFSModel.deleteMany({_id : sourceId}).exec()
+
+        if(!deleteResult){
+            throw new Error(`Unable to delete the pdf with id ${pdfId}`)
+        }
+
+        return {
+            success : true
+        }
+
+    }catch(err){
+        console.log(`Error in DeleteIndexedPdfUsingItsIdService`)
+        return {
+            success : false,
+            message : err.message
+        }
+    }
+}
 
 module.exports = {
+    GetAllIndexedPdfService,
     CreateNewPDFEntryService,
     UpdateTheIndexedInfoOfPDFService,
-    CheckPdfDuplicacyService
-};
+    CheckPdfDuplicacyService,
+    GetPDFDetailsUsingItsIdService,
+    DeleteIndexedPdfUsingItsIdService
+}

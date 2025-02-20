@@ -1,33 +1,33 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose")
 
-const UserSchema = new mongoose.Schema({ // Define the schema for the users collection.
-    fullName: { 
-        type: String,
-        required: true
+const UserSchema = new mongoose.Schema({
+    fullName : {
+        type : String,
+        required : true
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true
+    email : {
+        type : String,
+        required : true,
+        unique : true
     },
-    password: {
-        type: String,
-        required: true
+    password : {
+        type : String,
+        required : true
     },
-    organizationId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'organizations'
+    organizationId : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'organizations'
     },
-    role: {
-        type: String,
-        default: "ORG_MEMBER",
-        enum: ["ORG_ADMIN", "ORG_MEMBER"]
+    role : {
+        type : String,
+        default : "ORG_MEMBER",
+        enum : ["ORG_ADMIN", "ORG_MEMBER"]
     },
-    profilePicture: {
-        type: String
+    profilePicture : {
+        type : String
     }
-});
+})
 
-const USERSModel = mongoose.model("users", UserSchema);
+const USERSModel = mongoose.model("users", UserSchema)
 
-module.exports = USERSModel;
+module.exports = USERSModel

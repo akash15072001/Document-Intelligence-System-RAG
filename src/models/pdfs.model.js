@@ -1,5 +1,4 @@
-
-const mongoose = require('mongoose');
+const mongoose = require("mongoose")
 
 const PdfSchema = new mongoose.Schema({
     name : {
@@ -30,8 +29,8 @@ const PdfSchema = new mongoose.Schema({
     indexed_at : {
         type : Date
     }
-});
+})
 
-const PDFSModel = mongoose.model('pdfs', PdfSchema);
+const PDFSModel = mongoose.model("pdfs", PdfSchema)
 
-module.exports = PDFSModel;
+module.exports = PDFSModel

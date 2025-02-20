@@ -1,21 +1,23 @@
+const RequestLoggerMiddleware = async (req, res, next)=>{
+    try{
 
-// Middleware to log the request details.
-const RequestLoggerMiddleware = async (req, res, next) => {
-    try {
-        const httpMethod = req.method; // Get the HTTP method.
-        const ip =  req.ip; // Get the IP address.
-        const url = req.url; // Get the URL.
+        const httpMethod = req.method;
+        const ip = req.ip
+        const url = req.url
 
-        console.log(`HTTP Method: ${httpMethod} | IP: ${ip} | URL: ${url}`); // Log the request details.
+        console.log(`${httpMethod} ${url} ${ip} ${new Date()}`)
 
-        next(); // Move to the next middleware.
-    } catch (err) { // If any error occurs.
-        console.log(`Error in RequestLoggerMiddleware with error - ${err}`); // Log the error.
+        next()
+
+    }catch(err){
+        console.log(`Error in RequestLoggerMiddleware with err : ${err}`)
         res.status(err.statusCode ? err.statusCode : 500).json({
-            success: false,
-            message: err.message
+            success : false,
+            message : err.message
         })
     }
 }
 
-module.exports = RequestLoggerMiddleware;
+module.exports = {
+    RequestLoggerMiddleware
+}
