@@ -15,7 +15,7 @@ const SignupController = async (req, res) => {
 
         // =================== Error Handling ===================
         if (!fullName) {
-            const err = new Error("Full name is required");
+            const err = new Error("Full name is required in body");
             err.statusCode = 400;
             throw err;
         }
